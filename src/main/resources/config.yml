@@ -1,0 +1,133 @@
+SPEED:
+  Item: redstone
+  SpeedBoost: 1
+  Haste: 1
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+MOON:
+  Item: feather
+  JumpBoost: 2
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+SCUBA:
+  Item: sugar_cane
+  ScubaTime: 10
+  Haste: 2
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+LAVA:
+  Item: magma_cream
+  LavaTime: 2
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+RAGE:
+  Item: blaze_rod
+  LightningDamage: 5
+  FireTime: 4
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+PEACE:
+  Item: nether_wart
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+ASSASSIN:
+  Item: ender_pearl
+  SneakDamage: 4
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+CREEPER:
+  Item: gunpowder
+  ExplosionSize: 5
+  BlockDamage: true
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+SPIDER:
+  Item: slime_ball
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+VAMPIRE:
+  Item: ghast_tear
+  Percent: 25
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull
+
+MINER:
+  Item: gold_ingot
+  Haste: 1
+  ArmorTypes:
+    - leather
+    - iron
+    - gold
+    - chainmail
+    - diamond
+    - pumpkin
+    - skull

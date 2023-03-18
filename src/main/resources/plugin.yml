@@ -1,0 +1,75 @@
+name: ArmorAbilities
+authors: [gigosaurus, Random6894]
+description: Armor gives players abilities when wearing armor!
+api-version: 1.13
+version: 4.0.1
+main: com.gigosaurus.armorabilities.ArmorAbilities
+permissions:
+    armorabilities.*:
+        description: Gives access to all armor abilities
+        default: op
+        children:
+            armorabilities.nofalldamage: true
+            armorabilities.jump: true
+            armorabilities.nodrown: true
+            armorabilities.scubahaste: true
+            armorabilities.speedhaste: true
+            armorabilities.speed: true
+            armorabilities.lavaswim: true
+            armorabilities.nofiredamage: true
+            armorabilities.rage: true
+            armorabilities.sneak: true
+            armorabilities.peace: true
+            armorabilities.creeper: true
+            armorabilities.vampire: true
+            armorabilities.spider: true
+            armorabilities.miner: true
+    armorabilities.nofalldamage:
+        description: Take no fall damage when wearing jump armor.
+        default: true
+    armorabilities.jump:
+        description: Jump higher when wearing jump armor.
+        default: true
+    armorabilities.nodrown:
+        description: Do not drown with scuba armor.
+        default: true
+    armorabilities.scubaextras:
+        description: Dig faster under-water and see better with scuba armor.
+        default: true
+    armorabilities.speedhaste:
+        description: Dig faster when wearing speed armor.
+        default: true
+    armorabilities.speed:
+        description: Run faster with speed armor.
+        default: true
+    armorabilities.lavaswim:
+        description: Swim in lava unharmed with lava armor.
+        default: true
+    armorabilities.nofiredamage:
+        description: Take no fire damage with lava armor.
+        default: true
+    armorabilities.rage:
+        description: Punish things that attack you with rage armor.
+        default: op
+    armorabilities.assassin:
+        description: Become invisible when sneaking + do more damage.
+        default: true
+    armorabilities.peace:
+        description: Become neutral with all mobs.
+        default: true
+    armorabilities.creeper:
+        description: Explode on death + disguise as a creeper when sneaking.
+        default: op
+    armorabilities.vampire:
+        description: When You Attack Something, You Gain The Health They Lost.
+        default: true
+    armorabilities.spider:
+        description: Climb Walls + disguise as a spider when sneaking.
+        default: true
+    armorabilities.miner:
+        description: Dig faster and see in the dark.
+        default: true
+commands:
+   ability:
+      description: See what ability you are using.
+      usage: /<command>
