@@ -32,41 +32,31 @@ public class ConfigData {
                 String item = cfg.getString("Item");
                 List<String> types = cfg.getStringList("ArmorTypes");
 
-                if ((types != null) && !types.isEmpty()) {
+                if (!types.isEmpty()) {
                     abilities.add(new AbilityInfo(ability, item, types));
 
                     switch (ability) {
-                        case MOON:
-                            jumpNum = cfg.getInt("JumpBoost");
-                            break;
-                        case SCUBA:
+                        case MOON -> jumpNum = cfg.getInt("JumpBoost");
+                        case SCUBA -> {
                             scubaHasteNum = cfg.getInt("Haste");
                             scubaTime = cfg.getInt("ScubaTime");
-                            break;
-                        case SPEED:
+                        }
+                        case SPEED -> {
                             speedNum = cfg.getInt("SpeedBoost");
                             speedHasteNum = cfg.getInt("Haste");
-                            break;
-                        case LAVA:
-                            lavaTime = cfg.getInt("LavaTime");
-                            break;
-                        case RAGE:
+                        }
+                        case LAVA -> lavaTime = cfg.getInt("LavaTime");
+                        case RAGE -> {
                             rageLightningDamage = cfg.getInt("LightningDamage");
                             rageFireTime = cfg.getInt("FireTime");
-                            break;
-                        case CREEPER:
+                        }
+                        case CREEPER -> {
                             creeperAbilityExplosion = cfg.getInt("ExplosionSize");
                             creeperBlockDamage = cfg.getBoolean("BlockDamage");
-                            break;
-                        case MINER:
-                            minerHasteNum = cfg.getInt("Haste");
-                            break;
-                        case ASSASSIN:
-                            assassinDamage = cfg.getInt("SneakDamage");
-                            break;
-                        case VAMPIRE:
-                            vampirePercent = cfg.getDouble("VampirePercent", 25);
-                            break;
+                        }
+                        case MINER -> minerHasteNum = cfg.getInt("Haste");
+                        case ASSASSIN -> assassinDamage = cfg.getInt("SneakDamage");
+                        case VAMPIRE -> vampirePercent = cfg.getDouble("VampirePercent", 25);
                     }
                 }
             }

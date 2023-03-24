@@ -1,8 +1,8 @@
 name: ArmorAbilities
 authors: [gigosaurus, Random6894, MonsterWhat]
-description: Armor gives players abilities when wearing armor!
+description: Armor that gives players abilities!
 api-version: 1.19
-version: 5
+version: 5.0.0
 main: com.playdeca.armorabilities.ArmorAbilities
 permissions:
     armorabilities.*:

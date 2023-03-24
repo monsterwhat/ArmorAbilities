@@ -10,6 +10,9 @@ SPEED:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 MOON:
   Item: feather
@@ -22,6 +25,9 @@ MOON:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 SCUBA:
   Item: sugar_cane
@@ -35,6 +41,9 @@ SCUBA:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 LAVA:
   Item: magma_cream
@@ -47,6 +56,9 @@ LAVA:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 RAGE:
   Item: blaze_rod
@@ -60,6 +72,9 @@ RAGE:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 PEACE:
   Item: nether_wart
@@ -71,6 +86,9 @@ PEACE:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 ASSASSIN:
   Item: ender_pearl
@@ -83,6 +101,9 @@ ASSASSIN:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 CREEPER:
   Item: gunpowder
@@ -96,6 +117,9 @@ CREEPER:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 SPIDER:
   Item: slime_ball
@@ -107,6 +131,9 @@ SPIDER:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 VAMPIRE:
   Item: ghast_tear
@@ -119,6 +146,9 @@ VAMPIRE:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite
 
 MINER:
   Item: gold_ingot
@@ -131,3 +161,6 @@ MINER:
     - diamond
     - pumpkin
     - skull
+    - elytra
+    - turtle
+    - netherite

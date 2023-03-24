@@ -16,7 +16,6 @@ public class JoinListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // plugin.getTask().addPlayer(event.getPlayer());
         plugin.getTask().addPlayers();
     }
 

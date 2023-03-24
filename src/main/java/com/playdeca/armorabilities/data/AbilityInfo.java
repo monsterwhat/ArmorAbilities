@@ -66,51 +66,60 @@ public class AbilityInfo {
     private ArrayList<Material> getArmor(String armorType) {
         ArrayList<Material> armorSet = new ArrayList<>(4);
 
-        switch(armorType) {
-            case "leather":
+        switch (armorType) {
+            case "leather" -> {
                 armorSet.add(Material.LEATHER_HELMET);
                 armorSet.add(Material.LEATHER_CHESTPLATE);
                 armorSet.add(Material.LEATHER_LEGGINGS);
                 armorSet.add(Material.LEATHER_BOOTS);
-                break;
-            case "iron":
+            }
+            case "iron" -> {
                 armorSet.add(Material.IRON_HELMET);
                 armorSet.add(Material.IRON_CHESTPLATE);
                 armorSet.add(Material.IRON_LEGGINGS);
                 armorSet.add(Material.IRON_BOOTS);
-                break;
-            case "gold":
+            }
+            case "gold" -> {
                 armorSet.add(Material.GOLDEN_HELMET);
                 armorSet.add(Material.GOLDEN_CHESTPLATE);
                 armorSet.add(Material.GOLDEN_LEGGINGS);
                 armorSet.add(Material.GOLDEN_BOOTS);
-                break;
-            case "chainmail":
+            }
+            case "chainmail" -> {
                 armorSet.add(Material.CHAINMAIL_HELMET);
                 armorSet.add(Material.CHAINMAIL_CHESTPLATE);
                 armorSet.add(Material.CHAINMAIL_LEGGINGS);
                 armorSet.add(Material.CHAINMAIL_BOOTS);
-                break;
-            case "diamond":
+            }
+            case "diamond" -> {
                 armorSet.add(Material.DIAMOND_HELMET);
                 armorSet.add(Material.DIAMOND_CHESTPLATE);
                 armorSet.add(Material.DIAMOND_LEGGINGS);
                 armorSet.add(Material.DIAMOND_BOOTS);
-                break;
-            case "pumpkin":
+            }
+            case "netherite" -> {
+                armorSet.add(Material.NETHERITE_HELMET);
+                armorSet.add(Material.NETHERITE_CHESTPLATE);
+                armorSet.add(Material.NETHERITE_LEGGINGS);
+                armorSet.add(Material.NETHERITE_BOOTS);
+            }
+            case "turtle" -> armorSet.add(Material.TURTLE_HELMET);
+            case "elytra" -> armorSet.add(Material.ELYTRA);
+            case "shield" -> armorSet.add(Material.SHIELD);
+
+            case "pumpkin" -> {
                 armorSet.add(Material.PUMPKIN);
                 armorSet.add(Material.CARVED_PUMPKIN);
-                break;
-            case "skull":
+            }
+            case "skull" -> {
                 armorSet.add(Material.SKELETON_SKULL);
                 armorSet.add(Material.ZOMBIE_HEAD);
                 armorSet.add(Material.PLAYER_HEAD);
                 armorSet.add(Material.WITHER_SKELETON_SKULL);
-                break;
-            default:
+            }
+            default ->
                 //something weird has been entered into the config
-                Bukkit.getLogger().warning("[ArmorAbilities]: Unknown armor type \"" + armorType + "\" set for " + ability);
-                break;
+                    Bukkit.getLogger().warning("[ArmorAbilities]: Unknown armor type \"" + armorType + "\" set for " + ability);
         }
         return armorSet;
     }

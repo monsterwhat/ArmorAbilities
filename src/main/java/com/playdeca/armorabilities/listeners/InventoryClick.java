@@ -17,6 +17,8 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class InventoryClick implements Listener {
 
     private final ArmorAbilities plugin;
@@ -27,16 +29,16 @@ public class InventoryClick implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-
+        // Only execute for player clicks.
         if (!(event.getWhoClicked() instanceof Player)) {
             return;
         }
 
-        //if they are clicking to accept an anvil transaction
+        // Check if they are clicking to accept an anvil transaction.
         if ((event.getView().getType() == InventoryType.ANVIL) && (event.getRawSlot() == 2) &&
             (event.getCurrentItem() != null) ) {
 
-            //check if their input and output items have the same ability
+            // Check if their input and output items have the same ability.
             ItemStack input = event.getCurrentItem();
             ItemStack output = event.getInventory().getItem(0);
 
@@ -53,22 +55,21 @@ public class InventoryClick implements Listener {
                 event.setCancelled(true);
             }
         }
-
+        // Check if the player clicked on an armor slot or moved items between inventories.
         if ((event.getSlotType() == SlotType.ARMOR) || (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
-//            plugin.getTask().addPlayer((Player) event.getWhoClicked());
             plugin.getTask().addPlayers();
         }
     }
 
     private AbilityInfo getInfoFromItem(ItemStack item) {
-        return ((item == null) || !item.hasItemMeta() || !item.getItemMeta().hasDisplayName()) ? null :
+        return ((item == null) || !item.hasItemMeta() || !Objects.requireNonNull(item.getItemMeta()).hasDisplayName()) ? null :
                plugin.getData().getInfo(ArmorUtils.WORD.split(item.getItemMeta().getDisplayName())[0]);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
 
-        //check if a player is equipping an item from the hotbar
+        // Check if a player is equipping an item from the hotbar.
         if ((event.getAction() == Action.RIGHT_CLICK_AIR) || (event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
             ItemStack item = event.getItem();
 

@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Objects;
 
 public class ArmorAbilities extends JavaPlugin implements Listener {
 
@@ -41,7 +42,7 @@ public class ArmorAbilities extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new JoinListeners(this), this);
 
         //commands
-        this.getCommand("ability").setExecutor(new Commands(this));
+        Objects.requireNonNull(this.getCommand("ability")).setExecutor(new Commands(this));
 
         //add all currently online players (if a /reload was triggered or server took a while starting up)
         task.addPlayers();

@@ -18,12 +18,11 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class PlayerMoveListeners implements Listener {
 
     private final Map<String, ArrayList<Block>> vineMap = new HashMap<>(0);
-    private final ArrayList<Material> noVine = new ArrayList<>(38);
-
     private final ArmorAbilities plugin;
 
     public PlayerMoveListeners(ArmorAbilities armorAbilities) {
@@ -131,22 +130,6 @@ public class PlayerMoveListeners implements Listener {
                     Block opp = player.getLocation().add(0.0D, i, 0.0D).getBlock();
                     Block aboveOpp = opp.getLocation().add(0.0D, 1.0D, 0.0D).getBlock();
 
-                    /*
-                    int counter = 0;
-
-                    for (Material id : noVine) {
-                        if ((temp.getType() != Material.AIR) && (temp.getType() != id)) {
-                            counter++;
-                        }
-                    }
-
-                    if ((counter != noVine.size()) ||
-                        ((opp.getType() != Material.AIR) && (opp.getType() != Material.FERN) &&
-                         (opp.getType() != Material.DANDELION) && (opp.getType() != Material.POPPY))) {
-                        break;
-                    }
-                     */
-
                     if (!temp.getType().isSolid())
                         break;
 
@@ -162,7 +145,7 @@ public class PlayerMoveListeners implements Listener {
         //add potion effects if the player is in lava
         if (abilities.containsKey(Ability.LAVA) && player.hasPermission("armorabilities.lavaswim")) {
             int lavaAmt = abilities.get(Ability.LAVA);
-            if ((event.getTo().getBlock().getType() == Material.LAVA) ) {
+            if ((Objects.requireNonNull(event.getTo()).getBlock().getType() == Material.LAVA) ) {
                 if (!player.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE) && !plugin.getManager().isLava(player)) {
 
                     plugin.getManager().addLava(player);
@@ -202,64 +185,4 @@ public class PlayerMoveListeners implements Listener {
         setVines(player, updated);
     }
 
-    private void defineNoVineBlocks() {
-
-        //Could in theory be replaced with
-        //checking if the block is not
-        //a full, opaque cube?
-
-        noVine.add(Material.GLASS_PANE);
-        noVine.add(Material.BRICK_SLAB);
-        noVine.add(Material.ACACIA_SLAB);
-        noVine.add(Material.BIRCH_SLAB);
-        noVine.add(Material.DARK_OAK_SLAB);
-        noVine.add(Material.JUNGLE_SLAB);
-        noVine.add(Material.OAK_SLAB);
-        noVine.add(Material.SPRUCE_SLAB);
-        noVine.add(Material.SANDSTONE_SLAB);
-        noVine.add(Material.RED_SANDSTONE_SLAB);
-        noVine.add(Material.ACACIA_STAIRS);
-        noVine.add(Material.BIRCH_STAIRS);
-        noVine.add(Material.DARK_OAK_STAIRS);
-        noVine.add(Material.JUNGLE_STAIRS);
-        noVine.add(Material.OAK_STAIRS);
-        noVine.add(Material.SPRUCE_STAIRS);
-        noVine.add(Material.COBBLESTONE_STAIRS);
-        noVine.add(Material.BRICK_STAIRS);
-        noVine.add(Material.STONE_BRICK_STAIRS);
-        noVine.add(Material.NETHER_BRICK_STAIRS);
-        noVine.add(Material.SANDSTONE_STAIRS);
-        noVine.add(Material.RED_SANDSTONE_STAIRS);
-        noVine.add(Material.ACACIA_FENCE);
-        noVine.add(Material.BIRCH_FENCE);
-        noVine.add(Material.DARK_OAK_FENCE);
-        noVine.add(Material.JUNGLE_FENCE);
-        noVine.add(Material.OAK_FENCE);
-        noVine.add(Material.SPRUCE_FENCE);
-        noVine.add(Material.ACACIA_FENCE_GATE);
-        noVine.add(Material.BIRCH_FENCE_GATE);
-        noVine.add(Material.DARK_OAK_FENCE_GATE);
-        noVine.add(Material.JUNGLE_FENCE_GATE);
-        noVine.add(Material.OAK_FENCE_GATE);
-        noVine.add(Material.SPRUCE_FENCE_GATE);
-        noVine.add(Material.NETHER_BRICK_FENCE);
-        noVine.add(Material.LADDER);
-        noVine.add(Material.VINE);
-        noVine.add(Material.RED_BED);
-        noVine.add(Material.BLACK_BED);
-        noVine.add(Material.IRON_BARS);
-        noVine.add(Material.SNOW);
-        noVine.add(Material.SPRUCE_SIGN);
-        noVine.add(Material.LEVER);
-        noVine.add(Material.OAK_TRAPDOOR);
-        noVine.add(Material.PISTON_HEAD);
-        noVine.add(Material.MOVING_PISTON);
-        noVine.add(Material.TRIPWIRE_HOOK);
-        noVine.add(Material.REPEATER);
-        noVine.add(Material.OAK_BOAT);
-        noVine.add(Material.MINECART);
-        noVine.add(Material.CAKE);
-        noVine.add(Material.WATER);
-        noVine.add(Material.LAVA);
-    }
 }

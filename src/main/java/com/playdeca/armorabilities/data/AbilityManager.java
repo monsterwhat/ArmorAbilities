@@ -9,7 +9,6 @@ import org.bukkit.potion.PotionEffectType;
 import com.playdeca.armorabilities.utils.ArmorUtils;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 public class AbilityManager {
 
@@ -17,7 +16,6 @@ public class AbilityManager {
     private final Set<String> scubaActive = new HashSet<>(5);
     private final Set<String> lavaActive = new HashSet<>(5);
     private final ArmorAbilities plugin;
-    private final int durationOfAbilities = Integer.MAX_VALUE;
 
     public AbilityManager(ArmorAbilities plugin) {
         this.plugin = plugin;
@@ -72,25 +70,29 @@ public class AbilityManager {
 
         //check which ability effects the player should have
         ItemStack head = player.getInventory().getHelmet();
-        if ((head != null) && (head.getItemMeta().getDisplayName() != null)) {
+        if ((head != null)) {
+            Objects.requireNonNull(head.getItemMeta()).getDisplayName();
             armorNames[i] = ArmorUtils.WORD.split(head.getItemMeta().getDisplayName())[0];
             i++;
         }
 
         ItemStack chest = player.getInventory().getChestplate();
-        if ((chest != null) && (chest.getItemMeta().getDisplayName() != null)) {
+        if ((chest != null)) {
+            Objects.requireNonNull(chest.getItemMeta()).getDisplayName();
             armorNames[i] = ArmorUtils.WORD.split(chest.getItemMeta().getDisplayName())[0];
             i++;
         }
 
         ItemStack legs = player.getInventory().getLeggings();
-        if ((legs != null) && (legs.getItemMeta().getDisplayName() != null)) {
+        if ((legs != null)) {
+            Objects.requireNonNull(legs.getItemMeta()).getDisplayName();
             armorNames[i] = ArmorUtils.WORD.split(legs.getItemMeta().getDisplayName())[0];
             i++;
         }
 
         ItemStack feet = player.getInventory().getBoots();
-        if ((feet != null) && (feet.getItemMeta().getDisplayName() != null)) {
+        if ((feet != null)) {
+            Objects.requireNonNull(feet.getItemMeta()).getDisplayName();
             armorNames[i] = ArmorUtils.WORD.split(feet.getItemMeta().getDisplayName())[0];
         }
 
@@ -98,6 +100,7 @@ public class AbilityManager {
         abilities.put(player.getName(), newAbilities);
 
         //adjust effects
+        int durationOfAbilities = Integer.MAX_VALUE;
         if (oldAbilities.containsKey(Ability.MOON) && !newAbilities.containsKey(Ability.MOON)) {
             player.removePotionEffect(PotionEffectType.JUMP);
 
@@ -144,14 +147,6 @@ public class AbilityManager {
 
                 //check if they are underwater
                 if ((player.getEyeLocation().getBlock().getType() == Material.WATER) ) {
-
-                    //we only want to decrease the effect if needed, so there must be an old effect higher than new
-//                    if (oldAbilities.containsKey(Ability.SCUBA) &&
-//                        (newAbilities.get(Ability.SCUBA) < oldAbilities.get(Ability.SCUBA))) {
-//                        int scubaAmt = newAbilities.get(Ability.SCUBA);
-//                        int length = plugin.getData().getScubaTime() * scubaAmt * scubaAmt * 20;
-//                        reducePotionEffect(player, PotionEffectType.WATER_BREATHING, length);
-//                    }
 
                     if (newAbilities.get(Ability.SCUBA) == 4) {
                         player.removePotionEffect(PotionEffectType.NIGHT_VISION);
@@ -205,12 +200,6 @@ public class AbilityManager {
         }
     }
 
-    /*
-    public static boolean hasFullSet(Player player) {
-        Map<Ability, Integer> abilities = ArmorAbilities.getInstance().getManager().getAbilities(player);
-    }
-    */
-
     /**
      * turn the provided names into a map containing the abilities and their strengths
      *
@@ -236,14 +225,8 @@ public class AbilityManager {
         }
 
         //remove any which don't have the full set which require it
-        Iterator<Entry<Ability, Integer>> itr = abilityAmounts.entrySet().iterator();
 
-        while (itr.hasNext()) {
-            Entry<Ability, Integer> entry = itr.next();
-            if (entry.getKey().requiresFullSet() && (entry.getValue() != 4)) {
-                itr.remove();
-            }
-        }
+        abilityAmounts.entrySet().removeIf(entry -> entry.getKey().requiresFullSet() && (entry.getValue() != 4));
 
         return abilityAmounts;
     }
