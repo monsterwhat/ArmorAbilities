@@ -1,4 +1,4 @@
-package com.gigosaurus.armorabilities.data;
+package com.playdeca.armorabilities.data;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

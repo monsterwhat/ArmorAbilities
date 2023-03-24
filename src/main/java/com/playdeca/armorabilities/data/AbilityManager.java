@@ -1,12 +1,12 @@
-package com.gigosaurus.armorabilities.data;
+package com.playdeca.armorabilities.data;
 
-import com.gigosaurus.armorabilities.ArmorAbilities;
+import com.playdeca.armorabilities.ArmorAbilities;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import com.gigosaurus.armorabilities.utils.ArmorUtils;
+import com.playdeca.armorabilities.utils.ArmorUtils;
 
 import java.util.*;
 import java.util.Map.Entry;

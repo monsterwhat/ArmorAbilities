@@ -1,6 +1,6 @@
-package com.gigosaurus.armorabilities.listeners;
+package com.playdeca.armorabilities.listeners;
 
-import com.gigosaurus.armorabilities.ArmorAbilities;
+import com.playdeca.armorabilities.ArmorAbilities;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

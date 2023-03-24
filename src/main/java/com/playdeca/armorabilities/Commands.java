@@ -1,7 +1,7 @@
-package com.gigosaurus.armorabilities;
+package com.playdeca.armorabilities;
 
-import com.gigosaurus.armorabilities.data.Ability;
-import com.gigosaurus.armorabilities.data.AbilityInfo;
+import com.playdeca.armorabilities.data.Ability;
+import com.playdeca.armorabilities.data.AbilityInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

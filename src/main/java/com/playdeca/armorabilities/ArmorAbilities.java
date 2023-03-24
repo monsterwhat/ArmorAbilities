@@ -1,11 +1,11 @@
-package com.gigosaurus.armorabilities;
+package com.playdeca.armorabilities;
 
-import com.gigosaurus.armorabilities.data.AbilityManager;
-import com.gigosaurus.armorabilities.data.ConfigData;
-import com.gigosaurus.armorabilities.listeners.CombatListeners;
-import com.gigosaurus.armorabilities.listeners.InventoryClick;
-import com.gigosaurus.armorabilities.listeners.JoinListeners;
-import com.gigosaurus.armorabilities.listeners.PlayerMoveListeners;
+import com.playdeca.armorabilities.data.AbilityManager;
+import com.playdeca.armorabilities.data.ConfigData;
+import com.playdeca.armorabilities.listeners.CombatListeners;
+import com.playdeca.armorabilities.listeners.InventoryClick;
+import com.playdeca.armorabilities.listeners.JoinListeners;
+import com.playdeca.armorabilities.listeners.PlayerMoveListeners;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 

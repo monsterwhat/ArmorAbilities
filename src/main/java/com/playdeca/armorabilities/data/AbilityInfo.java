@@ -1,10 +1,10 @@
-package com.gigosaurus.armorabilities.data;
+package com.playdeca.armorabilities.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import com.gigosaurus.armorabilities.utils.ArmorUtils;
+import com.playdeca.armorabilities.utils.ArmorUtils;
 
 import java.util.ArrayList;
 import java.util.List;

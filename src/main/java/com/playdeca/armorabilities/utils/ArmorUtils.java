@@ -1,7 +1,7 @@
-package com.gigosaurus.armorabilities.utils;
+package com.playdeca.armorabilities.utils;
 
-import com.gigosaurus.armorabilities.ArmorAbilities;
-import com.gigosaurus.armorabilities.data.Ability;
+import com.playdeca.armorabilities.ArmorAbilities;
+import com.playdeca.armorabilities.data.Ability;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;

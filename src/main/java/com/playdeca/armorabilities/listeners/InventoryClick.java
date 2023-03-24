@@ -1,10 +1,10 @@
-package com.gigosaurus.armorabilities.listeners;
+package com.playdeca.armorabilities.listeners;
 
-import com.gigosaurus.armorabilities.ArmorAbilities;
-import com.gigosaurus.armorabilities.data.Ability;
-import com.gigosaurus.armorabilities.data.AbilityInfo;
-import com.gigosaurus.armorabilities.data.AbilityManager;
-import com.gigosaurus.armorabilities.utils.ArmorUtils;
+import com.playdeca.armorabilities.ArmorAbilities;
+import com.playdeca.armorabilities.data.Ability;
+import com.playdeca.armorabilities.data.AbilityInfo;
+import com.playdeca.armorabilities.data.AbilityManager;
+import com.playdeca.armorabilities.utils.ArmorUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
