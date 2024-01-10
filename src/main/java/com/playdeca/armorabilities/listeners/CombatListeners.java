@@ -33,7 +33,7 @@ public class CombatListeners implements Listener {
             entity.getWorld().strikeLightningEffect(entity.getLocation());
             entity.getLocation().getBlock().setType(Material.AIR);
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Could not strike lightning at entity location");
         }
     }
 

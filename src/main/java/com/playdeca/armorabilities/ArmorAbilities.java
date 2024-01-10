@@ -6,6 +6,7 @@ import com.playdeca.armorabilities.listeners.CombatListeners;
 import com.playdeca.armorabilities.listeners.InventoryClick;
 import com.playdeca.armorabilities.listeners.JoinListeners;
 import com.playdeca.armorabilities.listeners.PlayerMoveListeners;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,17 +36,23 @@ public class ArmorAbilities extends JavaPlugin implements Listener {
         task.runTaskTimer(this, 20, 20);
 
         //init event listeners
-        getServer().getPluginManager().registerEvents(this, this);
-        getServer().getPluginManager().registerEvents(new CombatListeners(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryClick(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerMoveListeners(this), this);
-        getServer().getPluginManager().registerEvents(new JoinListeners(this), this);
+        initListeners();
 
         //commands
         Objects.requireNonNull(this.getCommand("ability")).setExecutor(new Commands(this));
 
         //add all currently online players (if a /reload was triggered or server took a while starting up)
         task.addPlayers();
+        Bukkit.getLogger().info("[ArmorAbilities] Enabled.");
+    }
+
+    public void initListeners(){
+        getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new CombatListeners(this), this);
+        getServer().getPluginManager().registerEvents(new InventoryClick(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerMoveListeners(this), this);
+        getServer().getPluginManager().registerEvents(new JoinListeners(this), this);
+        Bukkit.getLogger().info("[ArmorAbilities] Registered listeners.");
     }
 
     public static ArmorAbilities getInstance() {

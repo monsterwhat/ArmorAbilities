@@ -3,10 +3,8 @@ package com.playdeca.armorabilities;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.HashSet;
 import java.util.Set;
-
 
 public class AbilityCheckerTask extends BukkitRunnable {
 

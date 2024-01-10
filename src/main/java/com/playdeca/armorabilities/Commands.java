@@ -9,6 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -22,7 +23,7 @@ class Commands implements CommandExecutor {
     }
     // Override the onCommand method
     @Override
-    public boolean onCommand(CommandSender sender,Command cmd,String commandLabel, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String commandLabel, String[] args) {
         // Check if the sender is a player
         if (!(sender instanceof Player player)) {
             sender.sendMessage("This command only works in-game.");
