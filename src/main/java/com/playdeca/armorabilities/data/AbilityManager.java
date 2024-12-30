@@ -102,19 +102,19 @@ public class AbilityManager {
         //adjust effects
         int durationOfAbilities = Integer.MAX_VALUE;
         if (oldAbilities.containsKey(Ability.MOON) && !newAbilities.containsKey(Ability.MOON)) {
-            player.removePotionEffect(PotionEffectType.JUMP);
+            player.removePotionEffect(PotionEffectType.JUMP_BOOST);
 
         } else if (newAbilities.containsKey(Ability.MOON) && player.hasPermission("armorabilities.jump")) {
 
             int jumpAmt = newAbilities.get(Ability.MOON);
-            player.removePotionEffect(PotionEffectType.JUMP);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, durationOfAbilities,
+            player.removePotionEffect(PotionEffectType.JUMP_BOOST);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, durationOfAbilities,
                                                     plugin.getData().getJumpNum() * jumpAmt));
         }
 
         if (oldAbilities.containsKey(Ability.SPEED) && !newAbilities.containsKey(Ability.SPEED)) {
             player.removePotionEffect(PotionEffectType.SPEED);
-            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+            player.removePotionEffect(PotionEffectType.HASTE);
 
         } else if (newAbilities.containsKey(Ability.SPEED)) {
 
@@ -129,9 +129,9 @@ public class AbilityManager {
                 int fastDig = plugin.getData().getSpeedHasteNum();
                 if (newAbilities.get(Ability.SPEED) == 4) {
                     player.addPotionEffect(
-                            new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, fastDig));
+                            new PotionEffect(PotionEffectType.HASTE, Integer.MAX_VALUE, fastDig));
                 } else if (oldAbilities.containsKey(Ability.SPEED) && (oldAbilities.get(Ability.SPEED) == 4)) {
-                    player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                    player.removePotionEffect(PotionEffectType.HASTE);
                 }
             }
         }
@@ -139,7 +139,7 @@ public class AbilityManager {
         if (oldAbilities.containsKey(Ability.SCUBA) && !newAbilities.containsKey(Ability.SCUBA)) {
             player.removePotionEffect(PotionEffectType.WATER_BREATHING);
             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+            player.removePotionEffect(PotionEffectType.HASTE);
         } else if (newAbilities.containsKey(Ability.SCUBA) && player.hasPermission("armorabilities.scuba")) {
 
             //check if value is different
@@ -150,31 +150,31 @@ public class AbilityManager {
 
                     if (newAbilities.get(Ability.SCUBA) == 4) {
                         player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-                        player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                        player.removePotionEffect(PotionEffectType.HASTE);
                         int fastDig = plugin.getData().getScubaHasteNum();
                         player.addPotionEffect(
-                                new PotionEffect(PotionEffectType.FAST_DIGGING, durationOfAbilities, fastDig));
+                                new PotionEffect(PotionEffectType.HASTE, durationOfAbilities, fastDig));
                         player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 2400, 1));
                         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, durationOfAbilities, 1));
 
                     } else if (oldAbilities.containsKey(Ability.SCUBA) && (oldAbilities.get(Ability.SCUBA) == 4)) {
                         player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-                        player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                        player.removePotionEffect(PotionEffectType.HASTE);
                     }
                 }
             }
         }
 
         if (oldAbilities.containsKey(Ability.MINER) && !newAbilities.containsKey(Ability.MINER)) {
-            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+            player.removePotionEffect(PotionEffectType.HASTE);
 
         } else if (newAbilities.containsKey(Ability.MINER) && player.hasPermission("armorabilities.miner")) {
 
             if (!newAbilities.get(Ability.MINER).equals(oldAbilities.get(Ability.MINER))) {
 
                 int hasteNum = plugin.getData().getMinerHasteNum();
-                player.removePotionEffect(PotionEffectType.FAST_DIGGING);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, durationOfAbilities, hasteNum));
+                player.removePotionEffect(PotionEffectType.HASTE);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, durationOfAbilities, hasteNum));
             }
         }
 

@@ -84,15 +84,15 @@ public class PlayerMoveListeners implements Listener {
 
             if ((abilities.get(Ability.SCUBA) == 4) ) {
                 if ((headLoc.getBlock().getType() == Material.WATER || headLoc.getBlock().getType() == Material.WATER)) {
-                    player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                    player.removePotionEffect(PotionEffectType.HASTE);
                     player.removePotionEffect(PotionEffectType.NIGHT_VISION);
 
                     int fastDig = plugin.getData().getScubaHasteNum();
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, fastDig));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, Integer.MAX_VALUE, fastDig));
                     player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
 
                 } else {
-                    player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                    player.removePotionEffect(PotionEffectType.HASTE);
                     player.removePotionEffect(PotionEffectType.NIGHT_VISION);
                 }
             }
@@ -102,10 +102,10 @@ public class PlayerMoveListeners implements Listener {
         if (abilities.containsKey(Ability.MINER) && player.hasPermission("armorabilities.miner")) {
 
             if ((headLoc.getBlock().getType() == Material.WATER)) {
-                player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                player.removePotionEffect(PotionEffectType.HASTE);
                 player.removePotionEffect(PotionEffectType.NIGHT_VISION);
             } else {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 20000, plugin.getData().getMinerHasteNum()));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20000, plugin.getData().getMinerHasteNum()));
                 player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
             }
         }
