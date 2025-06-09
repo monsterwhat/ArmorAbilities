@@ -5,15 +5,15 @@ plugins {
 }
 
 group = 'com.playdeca'
-version = '5.0.4'
+version = '6.0.0'
 description = 'armorabilities'
 java.sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
     maven {
-        name = 'papermc'
-        url = uri("https://repo.papermc.io/repository/maven-public/")
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
     }
 }
 

@@ -8,6 +8,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import com.playdeca.armorabilities.utils.ArmorUtils;
 
+import org.bukkit.Bukkit;
 import java.util.*;
 
 public class AbilityManager {
@@ -22,11 +23,7 @@ public class AbilityManager {
     }
 
     /**
-     * Silently obtain the ability with the given name
-     *
-     * @param name the name of the ability
-     *
-     * @return the ability
+     * Returns the Ability enum for a given name, or null if invalid.
      */
     public static Ability getAbility(String name) {
         try {
@@ -37,274 +34,221 @@ public class AbilityManager {
     }
 
     /**
-     * Reduces a potion effect to a given duration if it is longer
-     *
-     * @param player   the player who has the potion effect
-     * @param type     the type of potion effect
-     * @param duration the maximum duration this potion effect should now be
+     * Reduces a potion effect to a given duration if it is longer.
      */
     private static void reducePotionEffect(Player player, PotionEffectType type, int duration) {
-        for (PotionEffect potionEffect : player.getActivePotionEffects()) {
-            if (potionEffect.getType() == type) {
-                if (potionEffect.getDuration() > duration) {
+        try {
+            for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+                if (potionEffect.getType() == type && potionEffect.getDuration() > duration) {
                     int amplifier = potionEffect.getAmplifier();
-                    player.removePotionEffect(potionEffect.getType());
+                    player.removePotionEffect(type);
                     player.addPotionEffect(new PotionEffect(type, duration, amplifier));
+                    return;
                 }
-                return;
             }
+        } catch (Exception e) {
+            //Log using bukkit logger
+            Bukkit.getLogger().severe("Error reducing potion effect for player " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
+
         }
     }
 
     /**
-     * Update which abilities the given player has, and change their passive effects accordingly
-     *
-     * @param player the player to update
+     * Updates a player's abilities and applies/removes passive effects as
+     * needed.
      */
     public void updateAbilityAmounts(Player player) {
+        try {
+            Map<Ability, Integer> oldAbilities = getAbilities(player);
 
-        Map<Ability, Integer> oldAbilities = getAbilities(player);
+            String[] armorNames = new String[4];
+            int i = 0;
+            for (ItemStack piece : new ItemStack[]{
+                player.getInventory().getHelmet(),
+                player.getInventory().getChestplate(),
+                player.getInventory().getLeggings(),
+                player.getInventory().getBoots()}) {
+                if (piece != null && piece.hasItemMeta()) {
+                    var meta = piece.getItemMeta();
+                    if (meta.getPersistentDataContainer().has(ArmorUtils.ABILITY_KEY, org.bukkit.persistence.PersistentDataType.STRING)) {
+                        String abilityName = meta.getPersistentDataContainer().get(ArmorUtils.ABILITY_KEY, org.bukkit.persistence.PersistentDataType.STRING);
+                        if (abilityName != null) {
+                            armorNames[i++] = abilityName;
+                        }
+                    }  
+                }
+            }
 
-        String[] armorNames = new String[4];
-        int i = 0;
+            Map<Ability, Integer> newAbilities = getAbilityAmounts(armorNames);
+            abilities.put(player.getName(), newAbilities);
 
-        //check which ability effects the player should have
-        ItemStack head = player.getInventory().getHelmet();
-        if ((head != null)) {
-            Objects.requireNonNull(head.getItemMeta()).getDisplayName();
-            armorNames[i] = ArmorUtils.WORD.split(head.getItemMeta().getDisplayName())[0];
-            i++;
-        }
+            int duration = Integer.MAX_VALUE;
 
-        ItemStack chest = player.getInventory().getChestplate();
-        if ((chest != null)) {
-            Objects.requireNonNull(chest.getItemMeta()).getDisplayName();
-            armorNames[i] = ArmorUtils.WORD.split(chest.getItemMeta().getDisplayName())[0];
-            i++;
-        }
+            // MOON (Jump Boost)
+            if (oldAbilities.containsKey(Ability.MOON) && !newAbilities.containsKey(Ability.MOON)) {
+                player.removePotionEffect(PotionEffectType.JUMP_BOOST);
+            } else if (newAbilities.containsKey(Ability.MOON) && player.hasPermission("armorabilities.jump")) {
+                int jumpAmt = newAbilities.get(Ability.MOON);
+                player.removePotionEffect(PotionEffectType.JUMP_BOOST);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, plugin.getData().getJumpNum() * jumpAmt));
+            }
 
-        ItemStack legs = player.getInventory().getLeggings();
-        if ((legs != null)) {
-            Objects.requireNonNull(legs.getItemMeta()).getDisplayName();
-            armorNames[i] = ArmorUtils.WORD.split(legs.getItemMeta().getDisplayName())[0];
-            i++;
-        }
-
-        ItemStack feet = player.getInventory().getBoots();
-        if ((feet != null)) {
-            Objects.requireNonNull(feet.getItemMeta()).getDisplayName();
-            armorNames[i] = ArmorUtils.WORD.split(feet.getItemMeta().getDisplayName())[0];
-        }
-
-        Map<Ability, Integer> newAbilities = getAbilityAmounts(armorNames);
-        abilities.put(player.getName(), newAbilities);
-
-        //adjust effects
-        int durationOfAbilities = Integer.MAX_VALUE;
-        if (oldAbilities.containsKey(Ability.MOON) && !newAbilities.containsKey(Ability.MOON)) {
-            player.removePotionEffect(PotionEffectType.JUMP_BOOST);
-
-        } else if (newAbilities.containsKey(Ability.MOON) && player.hasPermission("armorabilities.jump")) {
-
-            int jumpAmt = newAbilities.get(Ability.MOON);
-            player.removePotionEffect(PotionEffectType.JUMP_BOOST);
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, durationOfAbilities,
-                                                    plugin.getData().getJumpNum() * jumpAmt));
-        }
-
-        if (oldAbilities.containsKey(Ability.SPEED) && !newAbilities.containsKey(Ability.SPEED)) {
-            player.removePotionEffect(PotionEffectType.SPEED);
-            player.removePotionEffect(PotionEffectType.HASTE);
-
-        } else if (newAbilities.containsKey(Ability.SPEED)) {
-
-            if (player.hasPermission("armorabilities.speed")) {
-                int speedAmt = newAbilities.get(Ability.SPEED);
+            // SPEED (Speed & Haste)
+            if (oldAbilities.containsKey(Ability.SPEED) && !newAbilities.containsKey(Ability.SPEED)) {
                 player.removePotionEffect(PotionEffectType.SPEED);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, durationOfAbilities,
-                                                        plugin.getData().getSpeedNum() * speedAmt));
-            }
-
-            if (player.hasPermission("armorabilities.haste")) {
-                int fastDig = plugin.getData().getSpeedHasteNum();
-                if (newAbilities.get(Ability.SPEED) == 4) {
-                    player.addPotionEffect(
-                            new PotionEffect(PotionEffectType.HASTE, Integer.MAX_VALUE, fastDig));
-                } else if (oldAbilities.containsKey(Ability.SPEED) && (oldAbilities.get(Ability.SPEED) == 4)) {
-                    player.removePotionEffect(PotionEffectType.HASTE);
-                }
-            }
-        }
-
-        if (oldAbilities.containsKey(Ability.SCUBA) && !newAbilities.containsKey(Ability.SCUBA)) {
-            player.removePotionEffect(PotionEffectType.WATER_BREATHING);
-            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.removePotionEffect(PotionEffectType.HASTE);
-        } else if (newAbilities.containsKey(Ability.SCUBA) && player.hasPermission("armorabilities.scuba")) {
-
-            //check if value is different
-            if (!newAbilities.get(Ability.SCUBA).equals(oldAbilities.get(Ability.SCUBA))) {
-
-                //check if they are underwater
-                if ((player.getEyeLocation().getBlock().getType() == Material.WATER) ) {
-
-                    if (newAbilities.get(Ability.SCUBA) == 4) {
-                        player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-                        player.removePotionEffect(PotionEffectType.HASTE);
-                        int fastDig = plugin.getData().getScubaHasteNum();
-                        player.addPotionEffect(
-                                new PotionEffect(PotionEffectType.HASTE, durationOfAbilities, fastDig));
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 2400, 1));
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, durationOfAbilities, 1));
-
-                    } else if (oldAbilities.containsKey(Ability.SCUBA) && (oldAbilities.get(Ability.SCUBA) == 4)) {
-                        player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-                        player.removePotionEffect(PotionEffectType.HASTE);
-                    }
-                }
-            }
-        }
-
-        if (oldAbilities.containsKey(Ability.MINER) && !newAbilities.containsKey(Ability.MINER)) {
-            player.removePotionEffect(PotionEffectType.HASTE);
-
-        } else if (newAbilities.containsKey(Ability.MINER) && player.hasPermission("armorabilities.miner")) {
-
-            if (!newAbilities.get(Ability.MINER).equals(oldAbilities.get(Ability.MINER))) {
-
-                int hasteNum = plugin.getData().getMinerHasteNum();
                 player.removePotionEffect(PotionEffectType.HASTE);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, durationOfAbilities, hasteNum));
-            }
-        }
-
-        if (oldAbilities.containsKey(Ability.LAVA) && !newAbilities.containsKey(Ability.MINER)) {
-            player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
-        } else if (newAbilities.containsKey(Ability.LAVA) && player.hasPermission("armorabilities.lavaswim")) {
-
-            //check if value is different
-            if (!newAbilities.get(Ability.LAVA).equals(oldAbilities.get(Ability.LAVA))) {
-
-                //check if they are in lava
-                if ((player.getLocation().getBlock().getType() == Material.LAVA) ) {
-
-                    //we only want to decrease the effect if needed, so there must be an old effect higher than new
-                    if (oldAbilities.containsKey(Ability.LAVA) &&
-                        (newAbilities.get(Ability.LAVA) < oldAbilities.get(Ability.LAVA))) {
-                        int lavaAmt = newAbilities.get(Ability.LAVA);
-                        int length = plugin.getData().getLavaTime() * lavaAmt * lavaAmt * 20;
-                        reducePotionEffect(player, PotionEffectType.FIRE_RESISTANCE, length);
+            } else if (newAbilities.containsKey(Ability.SPEED)) {
+                int speedAmt = newAbilities.get(Ability.SPEED);
+                if (player.hasPermission("armorabilities.speed")) {
+                    player.removePotionEffect(PotionEffectType.SPEED);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, plugin.getData().getSpeedNum() * speedAmt));
+                }
+                if (player.hasPermission("armorabilities.haste")) {
+                    int fastDig = plugin.getData().getSpeedHasteNum();
+                    if (speedAmt == 4) {
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, fastDig));
+                    } else if (oldAbilities.containsKey(Ability.SPEED) && oldAbilities.get(Ability.SPEED) == 4) {
+                        player.removePotionEffect(PotionEffectType.HASTE);
                     }
                 }
             }
+
+            // SCUBA (Water Breathing, Night Vision, Haste)
+            if (oldAbilities.containsKey(Ability.SCUBA) && !newAbilities.containsKey(Ability.SCUBA)) {
+                player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+                player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+                player.removePotionEffect(PotionEffectType.HASTE);
+            } else if (newAbilities.containsKey(Ability.SCUBA) && player.hasPermission("armorabilities.scuba")) {
+                if (!Objects.equals(newAbilities.get(Ability.SCUBA), oldAbilities.get(Ability.SCUBA))) {
+                    if (player.getEyeLocation().getBlock().getType() == Material.WATER) {
+                        int scubaAmt = newAbilities.get(Ability.SCUBA);
+                        if (scubaAmt == 4) {
+                            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+                            player.removePotionEffect(PotionEffectType.HASTE);
+                            int fastDig = plugin.getData().getScubaHasteNum();
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, fastDig));
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 2400, 1));
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, duration, 1));
+                        } else if (oldAbilities.containsKey(Ability.SCUBA) && oldAbilities.get(Ability.SCUBA) == 4) {
+                            player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+                            player.removePotionEffect(PotionEffectType.HASTE);
+                        }
+                    }
+                }
+            }
+
+            // MINER (Haste)
+            if (oldAbilities.containsKey(Ability.MINER) && !newAbilities.containsKey(Ability.MINER)) {
+                player.removePotionEffect(PotionEffectType.HASTE);
+            } else if (newAbilities.containsKey(Ability.MINER) && player.hasPermission("armorabilities.miner")) {
+                if (!Objects.equals(newAbilities.get(Ability.MINER), oldAbilities.get(Ability.MINER))) {
+                    int hasteNum = plugin.getData().getMinerHasteNum();
+                    player.removePotionEffect(PotionEffectType.HASTE);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, hasteNum));
+                }
+            }
+
+            // LAVA (Fire Resistance)
+            if (oldAbilities.containsKey(Ability.LAVA) && !newAbilities.containsKey(Ability.LAVA)) {
+                player.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+            } else if (newAbilities.containsKey(Ability.LAVA) && player.hasPermission("armorabilities.lavaswim")) {
+                if (!Objects.equals(newAbilities.get(Ability.LAVA), oldAbilities.get(Ability.LAVA))) {
+                    if (player.getLocation().getBlock().getType() == Material.LAVA) {
+                        if (oldAbilities.containsKey(Ability.LAVA) && newAbilities.get(Ability.LAVA) < oldAbilities.get(Ability.LAVA)) {
+                            int lavaAmt = newAbilities.get(Ability.LAVA);
+                            int length = plugin.getData().getLavaTime() * lavaAmt * lavaAmt * 20;
+                            reducePotionEffect(player, PotionEffectType.FIRE_RESISTANCE, length);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Log using bukkit logger
+            Bukkit.getLogger().severe("Error updating abilities for player " + player.getName() + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     /**
-     * turn the provided names into a map containing the abilities and their strengths
-     *
-     * @param names the name(s) of the ability items
-     *
-     * @return the map
+     * Converts armor names to a map of abilities and their strengths.
      */
     public Map<Ability, Integer> getAbilityAmounts(String... names) {
+        try {
 
-        //check the strength of each ability effect
-        Map<Ability, Integer> abilityAmounts = new EnumMap<>(Ability.class);
-
-        for (String name : names) {
-            if (name != null) {
-                Ability ability = getAbility(name);
-                if (ability != null) {
-                    if (abilityAmounts.containsKey(ability))
-                        abilityAmounts.put(ability, abilityAmounts.get(ability) + 1);
-                    else
-                        abilityAmounts.put(ability, 1);
+            Map<Ability, Integer> abilityAmounts = new EnumMap<>(Ability.class);
+            for (String name : names) {
+                if (name != null) {
+                    Ability ability = getAbility(name);
+                    if (ability != null) {
+                        abilityAmounts.put(ability, abilityAmounts.getOrDefault(ability, 0) + 1);
+                    }
                 }
             }
+            // Remove abilities that require a full set but don't have all 4 pieces
+            abilityAmounts.entrySet().removeIf(entry -> entry.getKey().requiresFullSet() && entry.getValue() != 4);
+            return abilityAmounts;
+
+        } catch (Exception e) {
+            // Log using bukkit logger
+            Bukkit.getLogger().severe("Error getting ability amounts: " + e.getMessage());
+            e.printStackTrace();
+            // Return an empty map in case of error
+            return Collections.emptyMap();
         }
-
-        //remove any which don't have the full set which require it
-
-        abilityAmounts.entrySet().removeIf(entry -> entry.getKey().requiresFullSet() && (entry.getValue() != 4));
-
-        return abilityAmounts;
     }
 
     /**
-     * Get all the abilities currently active on a player
-     *
-     * @param player the player
-     *
-     * @return the abilities
+     * Gets all abilities currently active on a player.
      */
     public Map<Ability, Integer> getAbilities(Player player) {
-        return abilities.containsKey(player.getName()) ?
-                abilities.get(player.getName()) : new EnumMap<>(Ability.class);
+        return abilities.getOrDefault(player.getName(), new EnumMap<>(Ability.class));
     }
 
     /**
-     * Sets the player as currently scuba diving
-     *
-     * @param player the player
+     * Sets the player as currently scuba diving.
      */
     public void addScuba(Player player) {
         scubaActive.add(player.getName());
     }
 
     /**
-     * Gets if the player is currently scuba diving
-     *
-     * @param player the player
-     *
-     * @return if they are scuba diving
+     * Returns true if the player is currently scuba diving.
      */
     public boolean isScuba(Player player) {
         return scubaActive.contains(player.getName());
     }
 
     /**
-     * Removes a player from scuba diving
-     *
-     * @param player the player
+     * Removes a player from scuba diving.
      */
     public void removeScuba(Player player) {
         scubaActive.remove(player.getName());
     }
 
     /**
-     * Sets the player as swimming in lava
-     *
-     * @param player the player
+     * Sets the player as swimming in lava.
      */
     public void addLava(Player player) {
         lavaActive.add(player.getName());
     }
 
     /**
-     * Gets if the player is currently swimming in lava
-     *
-     * @param player the player
-     *
-     * @return if they are swimming in lava
+     * Returns true if the player is currently swimming in lava.
      */
     public boolean isLava(Player player) {
         return lavaActive.contains(player.getName());
     }
 
     /**
-     * Removes a player from swimming in lava
-     *
-     * @param player the player
+     * Removes a player from swimming in lava.
      */
     public void removeLava(Player player) {
         lavaActive.remove(player.getName());
     }
 
     /**
-     * Remove the abilities from a player because they have left the server
-     *
-     * @param player the player
+     * Removes all ability tracking for a player (e.g. on logout).
      */
     public void removeAbilities(Player player) {
         abilities.remove(player.getName());

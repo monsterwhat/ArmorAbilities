@@ -6,6 +6,7 @@ import com.playdeca.armorabilities.listeners.CombatListeners;
 import com.playdeca.armorabilities.listeners.InventoryClick;
 import com.playdeca.armorabilities.listeners.JoinListeners;
 import com.playdeca.armorabilities.listeners.PlayerMoveListeners;
+import com.playdeca.armorabilities.listeners.SmithingTableListener;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,6 +53,7 @@ public class ArmorAbilities extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new InventoryClick(this), this);
         getServer().getPluginManager().registerEvents(new PlayerMoveListeners(this), this);
         getServer().getPluginManager().registerEvents(new JoinListeners(this), this);
+        getServer().getPluginManager().registerEvents(new SmithingTableListener(this), this); // Register Smithing Table Listener
         Bukkit.getLogger().info("[ArmorAbilities] Registered listeners.");
     }
 

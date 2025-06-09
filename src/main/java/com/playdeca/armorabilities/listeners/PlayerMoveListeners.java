@@ -16,18 +16,18 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerMoveListeners implements Listener {
 
-    private final Map<String, ArrayList<Block>> vineMap = new HashMap<>(0);
+    private final Map<String, List<Block>> vineMap = new ConcurrentHashMap<>();
     private final ArmorAbilities plugin;
 
     public PlayerMoveListeners(ArmorAbilities armorAbilities) {
-        plugin = armorAbilities;
-        //defineNoVineBlocks();
+        this.plugin = armorAbilities;
     }
 
     private static BlockFace yawToFace(float yaw) {
@@ -168,21 +168,15 @@ public class PlayerMoveListeners implements Listener {
         }
     }
 
-    private ArrayList<Block> getVines(Player player) {
-        if (vineMap.containsKey(player.getName())) {
-            return vineMap.get(player.getName());
-        }
-        return new ArrayList<>(1);
+    private List<Block> getVines(Player player) {
+        // Always returns a mutable list for the player
+        return vineMap.computeIfAbsent(player.getName(), k -> new ArrayList<>());
     }
-
-    private void setVines(Player player, ArrayList<Block> vines) {
-        vineMap.put(player.getName(), vines);
-    }
-
+ 
     private void addVines(Player player, Block vine) {
-        ArrayList<Block> updated = getVines(player);
+        List<Block> updated = getVines(player);
         updated.add(vine);
-        setVines(player, updated);
+        // No need to call setVines, as getVines already ensures the list is in the map
     }
 
 }

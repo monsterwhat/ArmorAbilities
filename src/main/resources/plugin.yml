@@ -2,7 +2,7 @@ name: ArmorAbilities
 authors: [gigosaurus, Random6894, MonsterWhat]
 description: Armors that give players abilities!
 api-version: 1.21
-version: 5.0.4
+version: 6.0.0
 main: com.playdeca.armorabilities.ArmorAbilities
 permissions:
     armorabilities.*:
@@ -71,5 +71,6 @@ permissions:
         default: true
 commands:
    ability:
+      aliases: [armorabilities, aa]
       description: See what ability you are using.
       usage: /<command>
