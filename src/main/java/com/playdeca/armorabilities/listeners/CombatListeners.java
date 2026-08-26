@@ -53,7 +53,10 @@ public class CombatListeners implements Listener {
 
         if (player.hasPermission("armorabilities.creeper") && abilities.containsKey(Ability.CREEPER)) {
             explosionLocations.add(player.getLocation().getBlock().getLocation());
-            player.getWorld().createExplosion(player.getLocation(), plugin.getData().getCreeperAbilityExplosion());
+            float explosionSize = plugin.getManager().isLegacyTier(player)
+                    ? plugin.getData().getCreeperAbilityExplosion() / 2f
+                    : plugin.getData().getCreeperAbilityExplosion();
+            player.getWorld().createExplosion(player.getLocation(), explosionSize);
             ItemStack[] items = player.getInventory().getContents();
             event.getDrops().clear();
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new DropItems(items, player), 10L);
@@ -95,13 +98,21 @@ public class CombatListeners implements Listener {
 
         if ((event.getCause() == DamageCause.FALL) && abilities.containsKey(Ability.MOON) &&
             (abilities.get(Ability.MOON) == 4) && player.hasPermission("armorabilities.nofalldamage")) {
-            event.setCancelled(true);
+            if (plugin.getManager().isLegacyTier(player)) {
+                event.setDamage(event.getDamage() / 2);
+            } else {
+                event.setCancelled(true);
+            }
         }
 
         if (((event.getCause() == DamageCause.FIRE) || (event.getCause() == DamageCause.FIRE_TICK) ||
              (event.getCause() == DamageCause.LAVA)) && abilities.containsKey(Ability.LAVA) &&
             (abilities.get(Ability.LAVA) == 4) && player.hasPermission("armorabilities.nofiredamage")) {
-            event.setCancelled(true);
+            if (plugin.getManager().isLegacyTier(player)) {
+                event.setDamage(event.getDamage() / 2);
+            } else {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -131,14 +142,17 @@ public class CombatListeners implements Listener {
                 Entity attacker = event.getDamager();
                 if (!defender.hasPermission("armorabilities.rage")) return;
 
+                boolean rageLegacy = plugin.getManager().isLegacyTier(defender);
+                int rageDamage = rageLegacy ? plugin.getData().getRageLightningDamage() / 2 : plugin.getData().getRageLightningDamage();
+                int rageFireTicks = rageLegacy ? plugin.getData().getRageFireTime() * 10 : plugin.getData().getRageFireTime() * 20;
                 if (attacker instanceof Arrow arrow && arrow.getShooter() instanceof LivingEntity shooter) {
                     strikeLightning(shooter);
-                    shooter.damage(plugin.getData().getRageLightningDamage(), defender);
-                    shooter.setFireTicks(plugin.getData().getRageFireTime() * 20);
+                    shooter.damage(rageDamage, defender);
+                    shooter.setFireTicks(rageFireTicks);
                 } else if (attacker instanceof LivingEntity livingAttacker) {
                     strikeLightning(livingAttacker);
-                    livingAttacker.damage(plugin.getData().getRageLightningDamage(), defender);
-                    livingAttacker.setFireTicks(plugin.getData().getRageFireTime() * 20);
+                    livingAttacker.damage(rageDamage, defender);
+                    livingAttacker.setFireTicks(rageFireTicks);
                 }
             }
         }
@@ -149,14 +163,20 @@ public class CombatListeners implements Listener {
 
             // Vampire: Heal on hit
             if (attacker.hasPermission("armorabilities.vampire") && abilities.containsKey(Ability.VAMPIRE)) {
-                int heal = (int) (event.getDamage() / (100.0 / plugin.getData().getVampirePercent()));
+                double vampirePercent = plugin.getManager().isLegacyTier(attacker)
+                        ? plugin.getData().getVampirePercent() / 2
+                        : plugin.getData().getVampirePercent();
+                int heal = (int) (event.getDamage() / (100.0 / vampirePercent));
                 attacker.setHealth(Math.min(attacker.getHealth() + heal, 20));
             }
 
             // Assassin: Extra damage while sneaking
             if (attacker.hasPermission("armorabilities.assassin") &&
                 abilities.containsKey(Ability.ASSASSIN) && attacker.isSneaking()) {
-                event.setDamage(event.getDamage() + plugin.getData().getAssassinDamage());
+                int assassinBonus = plugin.getManager().isLegacyTier(attacker)
+                        ? plugin.getData().getAssassinDamage() / 2
+                        : plugin.getData().getAssassinDamage();
+                event.setDamage(event.getDamage() + assassinBonus);
             }
         }
     }

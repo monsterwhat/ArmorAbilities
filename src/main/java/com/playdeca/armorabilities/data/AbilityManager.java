@@ -14,6 +14,7 @@ import java.util.*;
 public class AbilityManager {
 
     private final Map<String, Map<Ability, Integer>> abilities = new HashMap<>(16);
+    private final Map<String, Boolean> legacyTiers = new HashMap<>(16);
     private final Set<String> scubaActive = new HashSet<>(5);
     private final Set<String> lavaActive = new HashSet<>(5);
     private final ArmorAbilities plugin;
@@ -54,6 +55,10 @@ public class AbilityManager {
         }
     }
 
+    private static int scaled(int value, boolean legacy) {
+        return legacy ? value / 2 : value;
+    }
+
     /**
      * Updates a player's abilities and applies/removes passive effects as
      * needed.
@@ -64,6 +69,8 @@ public class AbilityManager {
 
             String[] armorNames = new String[4];
             int i = 0;
+            int tagged = 0;
+            int legacyTagged = 0;
             for (ItemStack piece : new ItemStack[]{
                 player.getInventory().getHelmet(),
                 player.getInventory().getChestplate(),
@@ -71,17 +78,23 @@ public class AbilityManager {
                 player.getInventory().getBoots()}) {
                 if (piece != null && piece.hasItemMeta()) {
                     var meta = piece.getItemMeta();
-                    if (meta.getPersistentDataContainer().has(ArmorUtils.ABILITY_KEY, org.bukkit.persistence.PersistentDataType.STRING)) {
-                        String abilityName = meta.getPersistentDataContainer().get(ArmorUtils.ABILITY_KEY, org.bukkit.persistence.PersistentDataType.STRING);
+                    var pdc = meta.getPersistentDataContainer();
+                    if (pdc.has(ArmorUtils.ABILITY_KEY, org.bukkit.persistence.PersistentDataType.STRING)) {
+                        String abilityName = pdc.get(ArmorUtils.ABILITY_KEY, org.bukkit.persistence.PersistentDataType.STRING);
                         if (abilityName != null) {
                             armorNames[i++] = abilityName;
+                            tagged++;
+                            Byte legacy = pdc.get(ArmorUtils.LEGACY_KEY, org.bukkit.persistence.PersistentDataType.BYTE);
+                            if (legacy != null && legacy == (byte) 1) legacyTagged++;
                         }
-                    }  
+                    }
                 }
             }
 
             Map<Ability, Integer> newAbilities = getAbilityAmounts(armorNames);
             abilities.put(player.getName(), newAbilities);
+            boolean legacyTier = tagged > 0 && tagged == legacyTagged;
+            legacyTiers.put(player.getName(), legacyTier);
 
             int duration = Integer.MAX_VALUE;
 
@@ -91,7 +104,7 @@ public class AbilityManager {
             } else if (newAbilities.containsKey(Ability.MOON) && player.hasPermission("armorabilities.jump")) {
                 int jumpAmt = newAbilities.get(Ability.MOON);
                 player.removePotionEffect(PotionEffectType.JUMP_BOOST);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, plugin.getData().getJumpNum() * jumpAmt));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, scaled(plugin.getData().getJumpNum() * jumpAmt, legacyTier)));
             }
 
             // SPEED (Speed & Haste)
@@ -102,12 +115,12 @@ public class AbilityManager {
                 int speedAmt = newAbilities.get(Ability.SPEED);
                 if (player.hasPermission("armorabilities.speed")) {
                     player.removePotionEffect(PotionEffectType.SPEED);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, plugin.getData().getSpeedNum() * speedAmt));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, duration, scaled(plugin.getData().getSpeedNum() * speedAmt, legacyTier)));
                 }
                 if (player.hasPermission("armorabilities.haste")) {
                     int fastDig = plugin.getData().getSpeedHasteNum();
                     if (speedAmt == 4) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, fastDig));
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, scaled(fastDig, legacyTier)));
                     } else if (oldAbilities.containsKey(Ability.SPEED) && oldAbilities.get(Ability.SPEED) == 4) {
                         player.removePotionEffect(PotionEffectType.HASTE);
                     }
@@ -127,8 +140,8 @@ public class AbilityManager {
                             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
                             player.removePotionEffect(PotionEffectType.HASTE);
                             int fastDig = plugin.getData().getScubaHasteNum();
-                            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, fastDig));
-                            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 2400, 1));
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, scaled(fastDig, legacyTier)));
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, legacyTier ? 1200 : 2400, 1));
                             player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, duration, 1));
                         } else if (oldAbilities.containsKey(Ability.SCUBA) && oldAbilities.get(Ability.SCUBA) == 4) {
                             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
@@ -145,7 +158,7 @@ public class AbilityManager {
                 if (!Objects.equals(newAbilities.get(Ability.MINER), oldAbilities.get(Ability.MINER))) {
                     int hasteNum = plugin.getData().getMinerHasteNum();
                     player.removePotionEffect(PotionEffectType.HASTE);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, hasteNum));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, duration, scaled(hasteNum, legacyTier)));
                 }
             }
 
@@ -157,7 +170,7 @@ public class AbilityManager {
                     if (player.getLocation().getBlock().getType() == Material.LAVA) {
                         if (oldAbilities.containsKey(Ability.LAVA) && newAbilities.get(Ability.LAVA) < oldAbilities.get(Ability.LAVA)) {
                             int lavaAmt = newAbilities.get(Ability.LAVA);
-                            int length = plugin.getData().getLavaTime() * lavaAmt * lavaAmt * 20;
+                            int length = scaled(plugin.getData().getLavaTime() * lavaAmt * lavaAmt * 20, legacyTier);
                             reducePotionEffect(player, PotionEffectType.FIRE_RESISTANCE, length);
                         }
                     }
@@ -203,6 +216,10 @@ public class AbilityManager {
      */
     public Map<Ability, Integer> getAbilities(Player player) {
         return abilities.getOrDefault(player.getName(), new EnumMap<>(Ability.class));
+    }
+
+    public boolean isLegacyTier(Player player) {
+        return legacyTiers.getOrDefault(player.getName(), false);
     }
 
     /**
